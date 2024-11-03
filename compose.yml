@@ -1,0 +1,42 @@
+services:
+  bun-server:
+    build: .                       # Build from the Dockerfile in the current directory
+    # image: image name daal idhar , comment above line and uncomment this one
+    container_name: bun_hono_server
+    volumes:
+      - ./uploads:/app/uploads                # Mounts your local app directory to /app in the container
+    ports:
+      - "3000:3000"               # Exposes port 3000 (adjust if needed)
+
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server
+          target: /app
+        - action: rebuild
+          path: package.json
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    command: > 
+        sh -c "bunx drizzle-kit migrate && bun run dev"
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=video-proc
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d video-proc -U user"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+volumes:
+  postgres-data:
