@@ -1,23 +1,27 @@
-# Use the Bun base image
-FROM oven/bun:1
+# Use the official Bun image
+# See all versions at https://hub.docker.com/r/oven/bun/tags
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-# Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-    
-COPY package.json bun.lockb ./
+# Install dependencies into temp directory
+# This will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lockb /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-ENV  DATABASE_URL=postgres://user:password@db:5432/video-proc
+# Copy node_modules from temp directory
+# Then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . ./
 
-    # Install dependencies
-RUN bun install
+# Run the app
+USER bun
+EXPOSE 3000
 
-# Set the working directory
-WORKDIR /app
-
-
-# Copy your app files
-COPY . .
-RUN bun install drizzle-kit
+# Generate drizzle-kit files before starting the app
 RUN bunx drizzle-kit generate
 
+# Set entrypoint to run migrations and then start the application
+ENTRYPOINT ["sh", "-c", "bunx drizzle-kit migrate && bun run dev"]
