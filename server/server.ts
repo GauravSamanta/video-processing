@@ -3,13 +3,15 @@ import { logger } from "hono/logger";
 import { serveStatic } from "hono/bun";
 import { videoRouter } from "./routes/videoRoutes";
 import { HTTPException } from "hono/http-exception";
+import { userRouter } from "./routes/userRoutes";
 
 const app = new Hono();
 
 app.use(logger());
-const apiRoutes = app.basePath("/api").route("/video", videoRouter);
-
-
+const apiRoutes = app
+  .basePath("/api")
+  .route("/video", videoRouter)
+  .route("/user", userRouter);
 app.use("*", serveStatic({ root: "./dist" }));
 app.get("*", serveStatic({ path: "./dist" }));
 app.onError((error, c) => {
