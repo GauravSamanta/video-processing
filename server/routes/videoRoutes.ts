@@ -32,7 +32,7 @@ const videoRouter = new Hono()
     fs.writeFile(filePath, new Uint8Array(buffer), (err) => {
       if (err) {
         console.error(err); // Log the error if writing fails
-        return c.text("Error saving file", 500);
+        return c.text("Error saving file ", 500);
       }
     });
 
@@ -40,7 +40,6 @@ const videoRouter = new Hono()
       name: file.name,
       videoId: unique,
     });
-
     const result = await db.execute("select * from videos");
 
     exec(`mkdir uploads/${unique}`);

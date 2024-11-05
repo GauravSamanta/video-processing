@@ -1,26 +1,28 @@
 services:
-  bun-server:
-    build: .                       # Build from the Dockerfile in the current directory
-    container_name: bun_hono_server
-    environment:
-      - NODE_ENV=development 
-      - DATABASE_URL=postgres://user:password@db:5432/video-proc
-    # volumes:
-    #   - ./:/app                    # Mounts your local app directory to /app in the container
-    ports:
-      - "3000:3000"                # Exposes port 3000 (adjust if needed)
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: always
-    develop:
-      watch:
-        - action: rebuild
-          path: ./server
-        - action: rebuild
-          path: package.json
-        - action: rebuild
-          path: ./dist
+#   bun-server:
+#     build: . # Build from the Dockerfile in the current directory
+#     container_name: bun_hono_server
+#     environment:
+#       - NODE_ENV=development
+#       - DATABASE_URL=postgres://user:password@db:5432/video-proc
+#     # volumes:
+#     #   - ./:/app                    # Mounts your local app directory to /app in the container
+#     ports:
+#       - "3000:3000" # Exposes port 3000 (adjust if needed)
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     restart: always
+#     develop:
+#       watch:
+#         - action: sync
+#           path: ./server
+#           target: /app/server
+#         - action: rebuild
+#           path: package.json
+#         - action: sync
+#           path: ./dist
+#           target: /app/dist
 
   db:
     image: postgres:17

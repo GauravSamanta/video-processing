@@ -9,6 +9,7 @@ const app = new Hono();
 app.use(logger());
 const apiRoutes = app.basePath("/api").route("/video", videoRouter);
 
+
 app.use("*", serveStatic({ root: "./dist" }));
 app.get("*", serveStatic({ path: "./dist" }));
 app.onError((error, c) => {
