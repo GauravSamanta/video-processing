@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/upload")({
+export const Route = createFileRoute('/_authenticated/upload')({
   component: Upload,
-});
+})
 
 function Upload() {
   return (
@@ -21,5 +21,5 @@ function Upload() {
         <button type="submit">Submit</button>
       </form>
     </div>
-  );
+  )
 }

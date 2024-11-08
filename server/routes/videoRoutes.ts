@@ -5,6 +5,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { db } from "../db";
 import { videosTable } from "../db/schemas/video";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const runVideoProcessing = promisify(exec);
 
@@ -57,10 +58,10 @@ const videoRouter = new Hono()
 
     return c.json({ videos: result.rows }, 200);
   })
-  .get("/get", async (c) => {
-    const results = await db
-      .select()
-      .from(videosTable);
+  .get("/get", authMiddleware, async (c) => {
+    const results = await db.select().from(videosTable);
+    const context = c.var.user;
+    console.log(context);
     return c.json({ videos: results });
   });
 

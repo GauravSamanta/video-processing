@@ -16,7 +16,7 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { api } from "../lib/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/login")({
   component: Login,

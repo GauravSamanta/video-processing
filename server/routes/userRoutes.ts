@@ -2,11 +2,12 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { insertUserSchema, loginSchema, usersTable } from "../db/schemas/user";
 import { db } from "../db";
-import { eq, or } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
-import { jwt, sign } from "hono/jwt";
+import { eq } from "drizzle-orm";
+import { sign } from "hono/jwt";
 import { setCookie } from "hono/cookie";
-const userRouter = new Hono()
+import { authMiddleware, type Env } from "../middlewares/auth.middleware";
+
+const userRouter = new Hono<Env>()
   .post("/register", zValidator("form", insertUserSchema), async (c) => {
     const user = c.req.valid("form");
     const [result] = await db
@@ -64,6 +65,11 @@ const userRouter = new Hono()
       message: "user logged in",
       name: existingUser.name,
     });
+  })
+  .get("/me", authMiddleware, async (c) => {
+    const user = c.var.user;
+    c.status(200);
+    return c.json(user);
   });
 
 export { userRouter };

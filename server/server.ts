@@ -4,6 +4,7 @@ import { serveStatic } from "hono/bun";
 import { videoRouter } from "./routes/videoRoutes";
 import { HTTPException } from "hono/http-exception";
 import { userRouter } from "./routes/userRoutes";
+import { authMiddleware } from "./middlewares/auth.middleware";
 
 const app = new Hono();
 
