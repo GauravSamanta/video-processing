@@ -4,7 +4,7 @@ import { insertUserSchema, loginSchema, usersTable } from "../db/schemas/user";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { sign } from "hono/jwt";
-import { setCookie } from "hono/cookie";
+import { deleteCookie, setCookie } from "hono/cookie";
 import { authMiddleware, type Env } from "../middlewares/auth.middleware";
 
 const userRouter = new Hono<Env>()
@@ -62,7 +62,7 @@ const userRouter = new Hono<Env>()
     setCookie(c, "token", token);
     return c.json({
       token,
-      message: "user logged in",
+      message: `Welcome ${existingUser.name }`,
       name: existingUser.name,
     });
   })
@@ -70,6 +70,11 @@ const userRouter = new Hono<Env>()
     const user = c.var.user;
     c.status(200);
     return c.json(user);
+  })
+  .post("/logout", authMiddleware, async (c) => {
+    deleteCookie(c, "token");
+    c.status(200);
+    return c.json("user logged out");
   });
 
 export { userRouter };
