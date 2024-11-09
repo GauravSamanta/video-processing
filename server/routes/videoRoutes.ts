@@ -12,9 +12,9 @@ const runVideoProcessing = promisify(exec);
 const videoRouter = new Hono()
   .post("/upload", async (c) => {
     const body = await c.req.parseBody();
-    console.log(body["video"]); // Log the content of 'ok'
+    console.log(body["videoFile"]); // Log the content of 'ok'
 
-    const file = body["video"];
+    const file = body["videoFile"];
 
     if (!(file instanceof File)) {
       return c.text("Upload a valid file", 400); // Return error if not valid
